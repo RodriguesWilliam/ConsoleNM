@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,6 +32,43 @@ namespace ExemploNM
                 context.Livros.Add(livro);
                 context.SaveChanges();
             }
+        }
+        private static void AtualizarDados()
+        {
+            using (var context = new AppDbContext())
+            {
+                //Localiza o livro a atualizar
+                var livro = context.Livros
+                    .Include(p => p.LivrosAutores)
+                    .Single(p => p.Titulo == "Criando aplicações Mobile");
+                //localiza o autor a ser usado           
+                var novoAutor = context.Autores.Single(p => p.Nome == "Martin");
+
+                //inclui um novo autor para o livro selecionado              
+                livro.LivrosAutores.Add(new LivroAutor
+                {
+                    Livro = livro,
+                    Autor = novoAutor,
+                });
+                context.SaveChanges();
+            }
+        }
+        private static void ExibeDados(AppDbContext context)
+        {
+            Console.WriteLine($"Livros e Autores");
+            var livros = context.Livros
+                            .Include(e => e.LivrosAutores)
+                            .ThenInclude(e => e.Autor)
+                           .ToList();
+            foreach (var livro in livros)
+            {
+                Console.WriteLine($"  Livro {livro.Titulo}");
+                foreach (var autor in livro.LivrosAutores.Select(e => e.Autor))
+                {
+                    Console.WriteLine($"    autor: {autor.Nome} {autor.SobreNome}");
+                }
+            }
+            Console.WriteLine();
         }
     }
 
