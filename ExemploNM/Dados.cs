@@ -33,7 +33,7 @@ namespace ExemploNM
                 context.SaveChanges();
             }
         }
-        private static void AtualizarDados()
+        public static void AtualizarDados()
         {
             using (var context = new AppDbContext())
             {
@@ -53,7 +53,7 @@ namespace ExemploNM
                 context.SaveChanges();
             }
         }
-        private static void ExibeDados(AppDbContext context)
+        public static void ExibeDados(AppDbContext context)
         {
             Console.WriteLine($"Livros e Autores");
             var livros = context.Livros
